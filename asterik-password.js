@@ -1,3 +1,4 @@
+//debounce function
 const debounce = (func, delay) => {
     let timeout;
     return (...args) => {
