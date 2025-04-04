@@ -1,12 +1,18 @@
-let scrollPos;
-function saveScroll(ctrlId) {
+let scrollPos = 0;
+const saveScroll = () => {
     scrollPos = $("#wrapper").scrollTop();
 }
-function setScroll(){
-    setTimeout(() => {
-        $("#wrapper").scrollTop(scrollPos);
-    }, 100)
-}
+//alternative approach to setTimeout()
+const setScroll = () => {
+    let wrapper = $("#wrapper");
+    if (wrapper.length) {
+        requestAnimationFrame(() => {
+            wrapper.scrollTop(scrollPos);
+        });
+    } else {
+        console.error("Wrapper not found in setScroll!!");
+    }
+};
 
 function invokeRowClickWithOption(trgrCtrlName,selctedoptn) {
     try {
