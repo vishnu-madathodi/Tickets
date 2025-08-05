@@ -1,6 +1,6 @@
 function NVDAChanges(id){
     try {
-        
+            //need to call on event for new material combo box
             var comboBox = $("." + id + "-dropbtn");
             comboBox.find("span").attr("aria-hidden", "true");
             comboBox.attr({
@@ -37,4 +37,5 @@ function NVDAChanges(id){
     } catch(error) {
         console.error(Error in the function NVDAChanges: ${error});
     }
+
 }
