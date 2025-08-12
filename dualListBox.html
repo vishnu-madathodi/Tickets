@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dual List box</title>
+    <style>
+      .list-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        width: 220px;
+        min-height: 200px;
+        /*background: #f9f9f9;*/
+        height: 300px;
+        overflow-y: auto;
+      }
+
+      .group {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        padding: 5px;
+        background: white;
+      }
+
+      .group-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 0;
+      }
+
+      .item.selected {
+        background-color: #cce5ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="multi-list-box-container" style="display: flex; gap: 20px">
+      <!-- Left Box -->
+      <div class="list-box" id="leftBox">
+        <div class="groups"></div>
+      </div>
+
+      <!-- Buttons -->
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 10px;
+        "
+      >
+        <button id="moveRight">→</button>
+        <button id="moveLeft">←</button>
+      </div>
+
+      <!-- Right Box -->
+      <div class="list-box" id="rightBox">
+        <div class="groups"></div>
+      </div>
+    </div>
+    <!-- include jQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const sampleData = {
+        rpaUserManager: [
+          { value: "rpauser1", label: "rpauser1" },
+          { value: "rpauser2", label: "rpauser2" },
+          { value: "rpauser3", label: "rpauser3" },
+          { value: "rpauser4", label: "rpauser4" },
+        ],
+        mrmAdmin: [
+          { value: "mrmdev1", label: "mrmdev1" },
+          { value: "mrmdev2", label: "mrmdev2" },
+          { value: "mrmdev3", label: "mrmdev3" },
+          { value: "mrmdev4", label: "mrmdev4" },
+        ],
+        qaTeamLead: [
+          { value: "qatester1", label: "qatester1" },
+          { value: "qatester2", label: "qatester2" },
+          { value: "qatester3", label: "qatester3" },
+        ],
+        devOpsTeam: [
+          { value: "devops1", label: "devops1" },
+          { value: "devops2", label: "devops2" },
+          { value: "devops3", label: "devops3" },
+          { value: "devops4", label: "devops4" },
+        ],
+        supportTeam: [
+          { value: "support1", label: "support1" },
+          { value: "support2", label: "support2" },
+        ],
+      };
+
+      function buildGroupedList(container, data) {
+        const groupsDiv = $(container).find(".groups").empty();
+
+        $.each(data, function (manager, users) {
+          const groupDiv = $("<div>")
+            .addClass("group")
+            .attr("data-manager", manager);
+
+          const title = $("<div>").addClass("group-title").text(manager).css({
+            cursor: "pointer",
+            fontWeight: "bold",
+            padding: "5px",
+            // background: "#eee",
+            // borderBottom: "1px solid #ccc"
+          });
+
+          // Toggle items visibility
+          title.on("click", function () {
+            $(this).siblings(".item").slideToggle();
+          });
+
+          groupDiv.append(title);
+
+          $.each(users, function (_, user) {
+            const itemDiv = $("<div>")
+              .addClass("item")
+              .attr("data-value", user.value)
+              .attr("data-manager", manager)
+              .text(user.label)
+              .hide()
+              .css({
+                padding: "5px 10px",
+                cursor: "pointer",
+              })
+              .on("click", function () {
+                $(this).toggleClass("selected");
+              });
+
+            groupDiv.append(itemDiv);
+          });
+
+          groupsDiv.append(groupDiv);
+        });
+      }
+
+      function moveRight() {
+        $("#leftBox .item.selected").each(function () {
+          const value = $(this).attr("data-value");
+          const label = $(this).text();
+
+          if ($("#rightBox .item[data-value='" + value + "']").length === 0) {
+            const itemDiv = $("<div>")
+              .addClass("item")
+              .attr("data-value", value)
+              .text(label)
+              .css({
+                padding: "5px 10px",
+                borderBottom: "1px solid #ccc",
+              });
+            $("#rightBox .groups").append(itemDiv);
+          }
+
+          $(this).removeClass("selected");
+        });
+
+        getRightBoxValues();
+      }
+
+      function moveLeft() {
+        $("#rightBox .item.selected").each(function () {
+          $(this).remove();
+        });
+        getRightBoxValues();
+      }
+
+      function getRightBoxValues() {
+        let values = [];
+        $("#rightBox .item").each(function () {
+          values.push($(this).attr("data-value"));
+        });
+        console.log(values.join("#"));
+      }
+
+      $(document).ready(function () {
+        buildGroupedList("#leftBox", sampleData);
+
+        $("#moveRight").on("click", moveRight);
+        $("#moveLeft").on("click", moveLeft);
+
+        // Allow selecting on right box too
+        $("#rightBox").on("click", ".item", function () {
+          $(this).toggleClass("selected");
+        });
+      });
+    </script>
+  </body>
+</html>
