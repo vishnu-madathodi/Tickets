@@ -35,7 +35,7 @@ function BuildAutoCompleteTagEditor(sourceCtrlID, id, selectionTextBoxID) {
         response: null,
         search: null,
         select: null,
-      },
+      }, 
       requestIndex: 0,
       pending: 0,
       _create: function () {
@@ -630,3 +630,4 @@ function GetSelectedAutoCompleteInputTagsValues(lblCtrlID) {
 $(".public_banner").on("scroll", function () {
   $(".ui-autocomplete.ui-front.ui-menu").hide();
 });
+
